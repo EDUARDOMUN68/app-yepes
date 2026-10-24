@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f6f1">
+  <meta name="description" content="Tiempo, noticias municipales y mapa de Yepes, Toledo.">
+  <title>APP YEPES · Mapa y tiempo</title>
+  <link rel="preconnect" href="https://server.arcgisonline.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root {--bg:#10211f;--surface:#172d29;--surface2:#1c3731;--line:rgba(205,232,218,.14);--white:#f1f5ed;--muted:#a8beb1;--mint:#a6dfc7;--lime:#d2ebb1;--coral:#ffd2a8;--accent:#e8aa79;--shadow:0 14px 42px rgba(0,0,0,.28)}
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--white);background:var(--bg)}
+    html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+    button,input{font:inherit}button{cursor:pointer}
+    .app{display:grid;grid-template-columns:348px minmax(0,1fr);height:100vh;height:100dvh}
+    .sidebar{z-index:600;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:linear-gradient(167deg,#192e29,#0e1c1c 72%);border-right:1px solid var(--line);box-shadow:5px 0 32px rgba(12,29,27,.15)}
+    .side-head{padding:25px 24px 18px;flex-shrink:0;border-bottom:1px solid var(--line)}
+    .eyebrow{display:flex;align-items:center;gap:9px;text-transform:uppercase;font-size:10px;letter-spacing:.24em;font-weight:800;color:var(--mint)}
+    .mark{width:19px;height:19px;display:inline-grid;place-items:center;border:1px solid rgba(173,236,210,.7);transform:rotate(-45deg);border-radius:3px}
+    .mark b{font-size:10px;transform:rotate(45deg)}
+    h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;letter-spacing:-.015em;font-size:46px;line-height:1.05;margin:15px 0 7px}
+    h1 em{font-size:26px;display:block;letter-spacing:0;color:#c8e4d0;font-weight:400;font-style:italic;margin-top:6px}
+    .subtitle{font-size:12.5px;color:var(--muted);line-height:1.6;margin:11px 0 0}
+    .statusbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:15px 0 0}
+    .status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;line-height:1.35}
+    .status i{display:block;flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:#edb87d;box-shadow:0 0 0 4px rgba(237,184,125,.11)}
+    .status.ok i{background:#a7e8bb;box-shadow:0 0 0 4px rgba(167,232,187,.12)}
+    .count{color:#e6efd9;font-weight:700;font-variant-numeric:tabular-nums;font-size:11px}
+    .side-scroll{overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1;scrollbar-width:thin;scrollbar-color:#517063 transparent}
+    .section{padding:21px 24px;border-bottom:1px solid var(--line)}
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 13px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.13em;color:#dcebdd}
+    .mini{font-size:10px;font-weight:500;letter-spacing:0;color:#92ab9d;text-transform:none}
+    .searchbox{display:flex;gap:9px;align-items:center;background:rgba(229,255,237,.065);border:1px solid rgba(210,237,221,.19);border-radius:13px;padding:11px 13px;transition:border-color .18s}
+    .searchbox:focus-within{border-color:rgba(183,234,205,.7);background:rgba(229,255,237,.09)}
+    .searchbox svg{width:17px;height:17px;stroke:var(--mint);flex:0 0 auto}
+    .searchbox input{min-width:0;width:100%;background:transparent;border:0;outline:none;font-size:13px;color:white}
+    .searchbox input::placeholder{color:#9aad9f}
+    .shortcuts{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+    .chip{color:#d0e8d6;background:transparent;border:1px solid rgba(179,213,190,.23);border-radius:16px;font-size:11px;padding:5px 10px;white-space:nowrap;transition:.18s}
+    .chip:hover,.chip:focus-visible{background:#365446;border-color:#83b9a1}
+    .switch-list{display:grid;gap:11px}
+    .switch-row{display:flex;align-items:center;justify-content:space-between;gap:15px;font-size:12px;color:#dce6df;cursor:pointer}
+    .switch-row small{display:block;font-size:10px;color:#90ab9b;margin-top:2px;line-height:1.4}
+    .switch-row input{appearance:none;flex:0 0 auto;width:35px;height:21px;border-radius:14px;background:#495a53;position:relative;outline:none;border:1px solid rgba(255,255,255,.14);cursor:pointer}
+    .switch-row input:after{content:"";position:absolute;width:15px;height:15px;border-radius:50%;background:#f0ede7;left:2px;top:2px;transition:transform .2s}
+    .switch-row input:checked{background:#73aa8f}.switch-row input:checked:after{transform:translateX(14px)}
+    .tab-switch{display:grid;grid-template-columns:1fr 1fr;background:rgba(0,0,0,.21);padding:4px;border-radius:11px;gap:3px;margin-bottom:14px}
+    .tab-switch button{color:#adc6b7;border:0;background:transparent;padding:9px 6px;border-radius:8px;font-weight:700;font-size:11px}
+    .tab-switch button.active{color:#152920;background:#bddfc9;box-shadow:0 3px 11px rgba(0,0,0,.1)}
+    .entries{min-height:175px;max-height:320px;overflow-y:auto;padding-right:2px;scrollbar-width:thin;scrollbar-color:#517063 transparent}
+    .entry{display:flex;align-items:center;gap:11px;width:100%;padding:11px 3px;background:transparent;border:0;border-bottom:1px solid rgba(219,239,222,.095);text-align:left;color:#f0f4ed;transition:background .15s}
+    .entry:hover,.entry:focus-visible{background:rgba(184,219,192,.08)}
+    .entry-dot{flex:0 0 auto;width:8px;height:8px;background:#91d9bd;border:2px solid #204c40;border-radius:50%;box-shadow:0 0 0 2px rgba(169,226,190,.2)}
+    .entry-dot.peak{background:var(--accent);border-color:#7e3e28;border-radius:2px;transform:rotate(45deg)}
+    .entry-name{font-size:12px;font-weight:600;line-height:1.28}.entry-meta{font-size:10px;color:var(--muted);margin-top:2px}
+    .entry-right{margin-left:auto;color:#86aa98;font-size:13px}
+    .empty-list{font-size:12px;line-height:1.6;color:var(--muted);padding:14px 2px}
+    .note{padding:15px 24px 19px;flex-shrink:0;font-size:10px;line-height:1.5;color:#8da89a;border-top:1px solid var(--line);background:rgba(0,0,0,.11)}
+    .note a{color:#accfb9;text-underline-offset:3px}
+    .map-panel{position:relative;min-width:0;min-height:0;background:#dce7db}
+    #map{position:absolute;inset:0;z-index:1;background:#d8e0d2}
+    .map-top{position:absolute;z-index:500;top:24px;left:24px;right:78px;display:flex;gap:10px;justify-content:space-between;align-items:flex-start;pointer-events:none}
+    .view-picker,.map-titlecard{pointer-events:auto;box-shadow:var(--shadow)}
+    .map-titlecard{border:1px solid rgba(255,255,255,.55);background:rgba(248,250,244,.94);color:#203d34;border-radius:14px;padding:12px 15px;backdrop-filter:blur(9px);max-width:290px}
+    .map-titlecard strong{font:600 16px Georgia,serif}.map-titlecard div{margin-top:4px;color:#667c70;font-size:11px;line-height:1.25}
+    .view-picker{display:flex;gap:3px;border:1px solid rgba(255,255,255,.5);background:rgba(250,252,247,.93);padding:5px;border-radius:12px;backdrop-filter:blur(9px)}
+    .view-picker button{border:0;border-radius:8px;padding:9px 13px;font-size:12px;font-weight:800;color:#647e70;background:transparent;transition:.2s}
+    .view-picker button.active{background:#284e3d;color:white}
+    .map-bottom{position:absolute;left:24px;bottom:31px;z-index:500;display:flex;align-items:flex-end;gap:9px;pointer-events:none}
+    .legend{pointer-events:auto;padding:13px 16px;border-radius:13px;color:#25453b;background:rgba(251,252,248,.95);box-shadow:var(--shadow);border:1px solid #fff;font-size:12px;line-height:1.9}
+    .legend strong{font-size:11px;display:block;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+    .legend-item{display:flex;gap:10px;align-items:center}
+    .legend-line{width:17px;height:0;border-top:3px solid #f2a873}
+    .legend-ring{width:14px;height:14px;border:2px solid #189071;border-radius:50%}
+    .legend-peak{font-size:14px;color:#a9693f;line-height:1}
+    .legend-dot{background:#238d75;width:7px;height:7px;border-radius:50%;margin:0 3px}
+    .map-action{pointer-events:auto;color:#25453b;background:#fbfcf7;border:1px solid #fff;border-radius:12px;box-shadow:var(--shadow);padding:13px;display:flex;gap:7px;align-items:center;font-weight:800;font-size:12px}
+    .map-action:hover{background:#e6f1e7}
+    .mountain-label{pointer-events:auto!important;background:#643f33e8;border:1px solid #efba96;color:#fff3e0;padding:7px 10px;border-radius:9px;box-shadow:0 4px 16px rgba(58,33,25,.23);font-weight:750;font-size:13px;letter-spacing:0;line-height:1.25;white-space:nowrap}
+    .mountain-label:before{content:'▲';font-size:9px;margin-right:5px;color:#ffd19f}
+    .mountain-label span{font-size:12px;color:#f2ceae;font-weight:500}
+    .peak-pin{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:#fff6e9;text-shadow:0 2px 4px #5c2c23;font-size:23px;filter:drop-shadow(0 2px 4px rgba(66,27,17,.7));transition:transform .2s}
+    .peak-pin:hover{transform:scale(1.2)}
+    .leaflet-control-zoom{border:0!important;box-shadow:var(--shadow)!important;border-radius:12px!important;overflow:hidden}
+    .leaflet-control-zoom a{color:#2e5d4c!important;border-color:#e4ede5!important}
+    .leaflet-control-scale-line{color:#31483e!important;background:rgba(255,255,255,.75)!important}
+    .leaflet-popup-content-wrapper{border-radius:13px;box-shadow:0 10px 40px #142d293d}.leaflet-popup-content{font:13px/1.6 system-ui,sans-serif;margin:15px 18px;color:#244439}
+    .leaflet-popup-content strong{font-size:15px;color:#163b2c}
+    .leaflet-popup-content .pop-kind{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#987251}
+    .leaflet-popup-content .pop-more{display:block;color:#5c786b;margin-top:6px}
+    .leaflet-popup-content a{color:#167758;font-weight:700}
+    .leaflet-tooltip.town-tooltip{background:#fffef5;color:#23483a;font-size:13px;font-weight:750;border:1px solid rgba(51,95,68,.24);box-shadow:0 3px 9px #0002;padding:4px 6px}
+    .leaflet-tooltip.town-tooltip:before{display:none}
+    .leaflet-tooltip-left.town-tooltip,.leaflet-tooltip-right.town-tooltip{border:1px solid rgba(51,95,68,.24)}
+    /* Etiquetas HTML nítidas: visibles encima de las imágenes de satélite.
+       No forman parte de los mosaicos rasterizados y no se deforman al ampliar. */
+    .sat-town-label{background:transparent!important;border:0!important;box-shadow:none!important;pointer-events:none!important;width:max-content!important;height:auto!important}
+    .sat-town-label span{display:inline-block;white-space:nowrap;padding:4px 7px;border-radius:6px;background:rgba(12,34,31,.83);border:1px solid rgba(234,252,238,.45);color:#fff;font:700 12px/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:0;text-shadow:0 1px 3px #09231d,0 1px 2px #09231d;box-shadow:0 2px 5px rgba(0,0,0,.22)}
+    .sat-town-label.major span{background:rgba(10,57,43,.94);border-color:#c3f1d4;font-weight:800}
+    @media(max-width:640px){.sat-town-label span{font-size:11px;padding:3px 5px}}
+    .mobile-toggle{display:none}
+    @media(max-width:900px){.app{grid-template-columns:290px minmax(0,1fr)}.side-head{padding:20px 17px 16px}.section{padding:18px 17px}.note{padding:13px 17px}h1{font-size:41px}.map-top{left:14px;top:14px;right:63px}.map-titlecard{display:none}.map-bottom{left:12px;bottom:26px}.legend{padding:9px 12px}}
+    @media(max-width:640px){
+      .app{display:block}.sidebar{position:absolute;top:0;left:0;right:0;height:auto;max-height:55dvh;z-index:1001;border:0;border-radius:0 0 17px 17px;box-shadow:0 7px 26px #091d1d66;transition:max-height .22s ease}
+      .sidebar.collapsed{max-height:106px}.side-head{padding:10px 116px 12px 17px;position:relative}.eyebrow{font-size:9px;letter-spacing:.16em}.mark{width:15px;height:15px}.mark b{font-size:8px}
+      h1{font-size:27px;margin:5px 0 0;display:block;line-height:1.02;letter-spacing:0}h1 em{font-size:14px;margin:3px 0 0;display:block;line-height:1.15;letter-spacing:0}.subtitle,.statusbar{display:none}
+      .mobile-toggle{display:block;position:absolute;right:14px;top:27px;background:#315144;border:1px solid #587365;border-radius:8px;color:#e0f2e1;padding:8px 12px;font-size:11px;font-weight:700}
+      .side-scroll{min-height:100px}.note{display:none}
+      .map-panel{position:absolute;inset:0}.map-top{top:117px;left:10px;right:58px;justify-content:flex-start}.view-picker{padding:3px;gap:2px}.view-picker button{font-size:12px;padding:10px 11px}
+      .map-bottom{left:10px;bottom:24px;right:10px;gap:7px}.legend{font-size:11px;padding:9px 11px;line-height:1.6}.legend strong{font-size:11px}.map-action{font-size:11px;padding:10px;gap:4px}
+      .leaflet-top.leaflet-right{top:111px}.leaflet-control-zoom a{width:31px!important;height:31px!important;line-height:30px!important}
+      .mountain-label{font-size:12px;padding:7px 9px}.mountain-label span{font-size:11px}
+    }
+  </style>
+<link rel="stylesheet" href="weather.css?v=0.3.0"><link rel="manifest" href="manifest.webmanifest?v=1.0.0"><link rel="icon" href="icon.svg"><script src="install.js?v=1.0.0"></script></head>
+<body>
+<nav class="app-nav" aria-label="Secciones"><strong>APP YEPES <span class="app-version">v1.0.0</span> <small>· Toledo y su entorno</small></strong><button data-page="weather" aria-pressed="true">El tiempo</button><button data-page="news" aria-pressed="false">Noticias</button><button data-page="atlas" aria-pressed="false">Mapa de Toledo</button></nav>
+<div id="pull-refresh" role="status" hidden></div><section id="weather-page" class="weather-page" aria-label="El tiempo en Yepes"><div class="weather-wrap">
+<header class="weather-heading"><div><span class="weather-kicker">TU TIEMPO · MESA DE OCAÑA</span><h1>Yepes</h1></div><button id="weather-refresh">Actualizar</button></header><p class="weather-source">Previsión local · ECMWF, modelo europeo</p>
+<button id="install-app" hidden>Instalar app</button><p id="weather-message" class="weather-message" role="status">Cargando la previsión…</p>
+<div id="weather-now" class="weather-now" aria-live="polite"><p>Consultando temperatura, humedad y viento…</p></div>
+<p id="weather-status" class="weather-status"></p><p id="weather-summary" class="weather-summary"></p>
+<h2>Los próximos 14 días</h2><p class="weather-note">Máxima y mínima diarias; humedad media de las horas del día. A partir de la segunda semana, interpreta los datos como tendencia y consulta de nuevo al acercarse la fecha.</p><div id="weather-days" class="weather-days"></div>
+<h2>Hora por hora · próximas 36 horas</h2><p class="weather-note">La humedad es relativa, en %. Lluvia en milímetros acumulados durante la hora. Datos previstos, no mediciones de una estación. Las flechas indican hacia dónde sopla el viento; las letras indican de dónde viene.</p>
+<div class="weather-table-wrap" tabindex="0" role="region" aria-label="Previsión por horas, desliza para ver todas las columnas"><table><thead><tr><th scope="col">Día y hora</th><th scope="col">Cielo</th><th scope="col">Temperatura</th><th scope="col">Sensación</th><th scope="col">Humedad</th><th scope="col">Lluvia</th><th scope="col">Nubes</th><th scope="col">Viento / rachas</th></tr></thead><tbody id="weather-hours"></tbody></table></div>
+<h2>Cómo se mueve el tiempo</h2><div class="weather-layer-buttons"><button data-weather-layer="clouds" aria-pressed="true">☁ Nubes</button><button data-weather-layer="rain" aria-pressed="false">🌧 Lluvia</button><button data-weather-layer="wind" aria-pressed="false">↗ Viento</button></div>
+<h3 id="weather-map-title">Nubes previstas</h3><p id="weather-map-explanation" class="weather-note" aria-live="polite">Los colores muestran la nubosidad prevista. Las líneas en movimiento representan el viento.</p><iframe id="weather-map" class="weather-map" title="Mapa meteorológico Windy centrado en Yepes" loading="lazy" src="https://embed.windy.com/embed.html?type=map&amp;location=coordinates&amp;lat=39.90199&amp;lon=-3.62517&amp;zoom=8&amp;overlay=clouds&amp;product=ecmwf&amp;level=surface&amp;metricTemp=%C2%B0C&amp;metricWind=km%2Fh&amp;metricRain=mm" allowfullscreen></iframe>
+<p class="weather-note">Mapa de previsión, no imagen de satélite observada. Usa la barra temporal del mapa para avanzar. <a href="https://www.windy.com/40.291/-4.584?clouds,40.291,-4.584,8" target="_blank" rel="noopener">Abrir Windy en pantalla completa ↗</a></p>
+<footer class="weather-footer">Datos: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> y <a href="https://www.ecmwf.int/" target="_blank" rel="noopener">ECMWF</a> · CC BY 4.0. Mapas: Windy y sus proveedores.<br>La app consulta novedades cada hora mientras está abierta y al volver a ella. El modelo se renueva aproximadamente cada seis horas. Si falla la conexión, conserva la última previsión y avisa.<br>Para instalar: abre el enlace publicado en el navegador del móvil y elige «Instalar aplicación» o «Añadir a pantalla de inicio». Versión 1.0.0.</footer>
+</div></section><section id="news-page" class="news-page" aria-label="Noticias de Yepes" hidden><div class="weather-wrap">
+<header class="weather-heading"><div><span class="weather-kicker">INFORMACIÓN MUNICIPAL</span><h1>Noticias de Yepes</h1></div><button id="news-refresh">Actualizar</button></header>
+<p class="weather-note">Portada de la web del Ayuntamiento y sus redes. Las actividades con fecha final conocida se ocultan cuando terminan. Los avisos sin caducidad clara se mantienen; comprueba sus fechas al abrirlos.</p>
+<h2>Portada de la web municipal</h2><p id="news-status" class="weather-status" role="status">Abre esta sección para consultar la portada municipal.</p><div id="news-items" class="news-items"></div>
+<h2>Instagram del Ayuntamiento</h2><p class="weather-note">Perfil oficial @aytoyepes. Cuando el visor público no facilita publicaciones, puedes abrir directamente el perfil. Las noticias de la web municipal se consultan automáticamente cada tres horas.</p><p id="news-social-status" class="weather-status" role="status"></p><div id="news-highlights" class="news-items" aria-live="polite"></div><h2>El Ayuntamiento en redes</h2><p>Consulta aquí sus publicaciones más recientes, incluidos avisos que pueden no aparecer en la web municipal.</p>
+<div class="news-social"><a href="https://www.instagram.com/aytoyepes/" target="_blank" rel="noopener">Instagram · @aytoyepes ↗</a><a href="https://www.facebook.com/ayuntamientoyepes/" target="_blank" rel="noopener">Facebook · Ayuntamiento de Yepes ↗</a><a href="https://www.yepes.es/noticias/pagina" target="_blank" rel="noopener">Actualidad municipal ↗</a></div>
+<h3>Publicaciones de Facebook</h3><p class="weather-note">Puedes cargar el visor de Facebook dentro de la app. Facebook puede pedir iniciar sesión o impedir su visualización; en ese caso usa el enlace anterior. Instagram se consulta directamente en su perfil.</p><button id="news-facebook-load">Mostrar publicaciones de Facebook</button><div id="news-facebook"></div>
+<footer class="weather-footer">Fuente: <a href="https://www.yepes.es/" target="_blank" rel="noopener">Ayuntamiento de Yepes</a>. Titulares enlazados a su publicación original. Consulta automática de la web programada cada tres horas, sujeta a disponibilidad. Instagram se consulta mediante su visor público sin iniciar sesión. Si la fuente limita el acceso, se conserva la última información y se avisa. No se importan publicaciones exclusivas de Facebook.</footer>
+</div></section><div class="app" id="atlas-page" hidden><aside id="sidebar" class="sidebar collapsed"><header class="side-head"><div class="eyebrow">CASTILLA-LA MANCHA · TOLEDO</div><h1>Yepes <em>y su entorno</em></h1><p class="subtitle">Explora la Mesa de Ocaña y los municipios de Toledo.</p><p id="atlas-status" class="weather-note">Cargando municipios…</p><button id="mobileToggle" class="mobile-toggle" aria-expanded="false">Explorar ↕</button></header><div class="side-scroll"><section class="section"><label class="searchbox"><input id="townSearch" type="search" placeholder="Buscar municipio de Toledo" aria-label="Buscar municipio"></label><div class="shortcuts"><button id="focusYepes" class="chip">Ir a Yepes</button></div></section><section class="section"><label class="switch-row"><span>Límites municipales</span><input id="toggleMunicipal" type="checkbox"></label><div id="entries" class="entries"></div></section></div><footer class="note">Geometría: IGN mediante es-atlas. Puntos aproximados de los términos municipales, salvo la coordenada verificada de Yepes.</footer></aside><main class="map-panel" aria-label="Mapa de Yepes y Toledo"><div id="map"></div><div class="map-top"><div class="map-titlecard"><strong>Yepes · Toledo</strong><div>Castilla-La Mancha · Mesa de Ocaña</div></div><div class="view-picker"><button data-base="topo" class="active">Relieve</button><button data-base="osm">Calles</button><button data-base="sat">Satélite</button></div></div><div class="map-bottom"><button id="resetView" class="map-action">Ver toda Toledo</button></div></main></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script><script src="map.js?v=1.0.0" defer></script><script src="weather.js?v=1.0.0" defer></script><script src="refresh.js?v=1.0.0" defer></script><script src="news.js?v=0.3.0" defer></script></body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
