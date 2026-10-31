@@ -39,7 +39,7 @@
     $('weather-days').innerHTML=[...groups.values()].slice(0,14).map((g,i)=>{
       const temp=values(g,'temperature_2m'), humidity=values(g,'relative_humidity_2m'), rain=values(g,'precipitation');
       const codes=values(g,'weather_code');const code=codes.length?Math.max(...codes):null;
-      return `<article class="day-card"><h3>${fmt(g[0].time,{weekday:'short',day:'numeric',month:'short'})}</h3><p>${icon(code)} ${code===null?'Sin datos':describe(code)}</p><strong>${temp.length?n(Math.max(...temp),'°'):'—'} <span>/ ${temp.length?n(Math.min(...temp),'°'):'—'}</span></strong><p>💧 Humedad media ${n(mean(humidity),' %')}</p><p>Lluvia ${rain.length===g.length?n(rain.reduce((s,v)=>s+v,0),' mm',1):'—'}</p>${i>=7?'<small>Tendencia · mayor incertidumbre</small>':''}</article>`;
+      return `<article class="day-card"><h3>${fmt(g[0].time,{weekday:'short',day:'numeric',month:'short'})}</h3><p class="day-sky">${icon(code)} <span>${code===null?'Sin datos':describe(code)}</span></p><strong>${temp.length?n(Math.max(...temp),'°'):'—'} <span>/ ${temp.length?n(Math.min(...temp),'°'):'—'}</span></strong><p class="day-humidity"><span>💧 Humedad media</span><span class="day-humidity-value">${n(mean(humidity),' %')}</span></p><p>Lluvia ${rain.length===g.length?n(rain.reduce((s,v)=>s+v,0),' mm',1):'—'}</p>${i>=7?'<small>Tendencia · mayor incertidumbre</small>':''}</article>`;
     }).join('');
     const stale=Date.now()-record.at>3600000;
     $('weather-status').textContent=`${stale?'Datos guardados · ':''}Descargados el ${new Date(record.at).toLocaleString('es-ES',{timeZone:zone})} · ECMWF IFS 9 km / Open-Meteo. Hora peninsular.`;

@@ -1,6 +1,6 @@
 'use strict';
-const CACHE='yepes-shell-1.0.2';
-const ASSETS=['./','./index.html','./weather.css?v=1.0.2','./weather.js?v=1.0.2','./map.js?v=1.0.0','./manifest.webmanifest?v=1.0.0','./install.js?v=1.0.0','./refresh.js?v=1.0.2','./news.js?v=1.0.0','./vendor/suncalc.js?v=1.9.0','./sky-icons.js?v=1.0.2','./icon.svg','./icon-192.png','./icon-512.png'];
+const CACHE='yepes-shell-1.0.3';
+const ASSETS=['./','./index.html','./weather.css?v=1.0.3','./weather.js?v=1.0.3','./map.js?v=1.0.0','./manifest.webmanifest?v=1.0.0','./install.js?v=1.0.0','./refresh.js?v=1.0.3','./news.js?v=1.0.0','./vendor/suncalc.js?v=1.9.0','./sky-icons.js?v=1.0.3','./icon.svg','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(asset=>new Request(asset,{cache:'reload'})))).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('yepes-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('message',event=>{if(event.data?.type==='ACTIVATE_UPDATE')self.skipWaiting()});
