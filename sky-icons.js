@@ -29,7 +29,7 @@
       const y=-9+18*i/32,edge=Math.sqrt(Math.max(0,81-y*y));
       points.push([12+(waxing?1:-1)*(1-2*fraction)*edge,12+y]);
     }
-    return '<svg class="weather-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="#8895a5"/><polygon points="'+points.map(p=>p.map(n=>n.toFixed(2)).join(',')).join(' ')+'" fill="#fff"/><circle cx="12" cy="12" r="9" fill="none" stroke="#526174" stroke-width="1.25"/></svg>';
+    return '<svg class="weather-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10.5" fill="#e8eef7"/><circle cx="12" cy="12" r="9" fill="#6d7e96"/><polygon points="'+points.map(p=>p.map(n=>n.toFixed(2)).join(',')).join(' ')+'" fill="#fff"/><g fill="#65758a" fill-opacity=".24"><circle cx="8.5" cy="7.7" r="1.6"/><circle cx="14.6" cy="8.8" r="1"/><circle cx="7.2" cy="13" r=".8"/><circle cx="11.3" cy="15.5" r="2.1"/><circle cx="16.8" cy="13.5" r="1.2"/><circle cx="15.4" cy="17.6" r=".65"/></g><path d="M7.2 7.5a1.4 1.4 0 0 1 1.4-1.2M9.5 15.3a1.8 1.8 0 0 1 1.8-1.6" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".65" stroke-linecap="round"/><circle cx="12" cy="12" r="9" fill="none" stroke="#61728b" stroke-width=".8"/></svg>';
   }
   function icon(code,isDay=1,timestamp){
     if(!Number.isFinite(code))return '—';
