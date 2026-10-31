@@ -42,8 +42,9 @@
         }
       }
     }catch(error){console.warn('No se pudo comprobar una versión nueva',error)}
-    try{localStorage.removeItem('yepes-weather-v2')}catch{}
+    try{localStorage.removeItem('yepes-weather-v3')}catch{}
     window.location.reload();
   },{passive:true});
 })();
+
 

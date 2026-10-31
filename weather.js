@@ -8,16 +8,16 @@
   const mean = a => a.length ? a.reduce((s,v)=>s+v,0)/a.length : null;
   const values = (rows,key) => rows.map(r=>r[key]).filter(Number.isFinite);
   const describe = c => !Number.isFinite(c)?'Sin datos':c===0?'Despejado':c<=2?'Poco nuboso':c===3?'Cubierto':c<=48?'Niebla':c<=57?'Llovizna':c<=67?'Lluvia':c<=77?'Nieve':c<=82?'Chubascos':c<=86?'Chubascos de nieve':c>=95?'Tormenta':'Sin datos';
-  const icon = c => !Number.isFinite(c)?'—':c===0?'☀️':c<=2?'🌤️':c===3?'☁️':c<=48?'🌫️':c<=67?'🌧️':c<=77?'❄️':c<=82?'🌦️':c<=86?'❄️':c>=95?'⛈️':'—';
+  const icon = (code,isDay,time) => WeatherSky.icon(code,isDay,time);
   const wind = degrees => {
     if(!Number.isFinite(degrees))return '—';
     const angle=((degrees%360)+360)%360;
     const from=['N','NE','E','SE','S','SO','O','NO'][Math.round(angle/45)%8];
     return `<span class="wind-direction" title="Viento del ${from}; la flecha indica hacia dónde sopla" aria-label="Viento del ${from}"><svg aria-hidden="true" class="wind-arrow" viewBox="0 0 24 24" style="transform:rotate(${angle+180}deg)"><path d="M12 21V3M4 11l8-8 8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg> ${from}</span>`;
   };
-  const variables=['temperature_2m','relative_humidity_2m','apparent_temperature','precipitation','cloud_cover','wind_speed_10m','wind_gusts_10m','wind_direction_10m','weather_code'];
+  const variables=['temperature_2m','relative_humidity_2m','apparent_temperature','precipitation','cloud_cover','wind_speed_10m','wind_gusts_10m','wind_direction_10m','weather_code','is_day'];
   const url = 'https://api.open-meteo.com/v1/ecmwf?'+new URLSearchParams({latitude:'39.90199',longitude:'-3.62517',hourly:variables.join(','),models:'ecmwf_ifs',forecast_days:'14',timezone:zone,timeformat:'unixtime',wind_speed_unit:'kmh'});
-  const cacheKey='yepes-weather-v2';
+  const cacheKey='yepes-weather-v3';
   let saved=null, busy=false;
   function rows(data){
     const h=data.hourly;
@@ -29,11 +29,11 @@
     const next=all.filter(r=>r.time>=Math.floor(now/3600)*3600).slice(0,36);
     const r=next[0];
     if(!r)throw Error('La previsión guardada ha caducado');
-    $('weather-now').innerHTML=`<div><span class="weather-kicker">Previsión para ${fmt(r.time,{weekday:'long',hour:'2-digit',minute:'2-digit'})}</span><h2>${icon(r.weather_code)} ${n(r.temperature_2m,' °C')}</h2><p>${describe(r.weather_code)} · Sensación ${n(r.apparent_temperature,' °C')}</p></div><div class="weather-metrics"><p><strong>${n(r.relative_humidity_2m,' %')}</strong><span>Humedad relativa</span></p><p><strong>${n(r.wind_speed_10m,' km/h')}</strong><span>${wind(r.wind_direction_10m)} · rachas ${n(r.wind_gusts_10m,' km/h')}</span></p><p><strong>${n(r.precipitation,' mm',1)}</strong><span>Precipitación en la hora</span></p></div>`;
+    $('weather-now').innerHTML=`<div><span class="weather-kicker">Previsión para ${fmt(r.time,{weekday:'long',hour:'2-digit',minute:'2-digit'})}</span><h2>${icon(r.weather_code,r.is_day,r.time)} ${n(r.temperature_2m,' °C')}</h2><p>${describe(r.weather_code)} · Sensación ${n(r.apparent_temperature,' °C')}</p>${r.is_day===0?'<p class="weather-moon-phase">'+WeatherSky.phaseText(r.is_day,r.time)+'</p>':''}</div><div class="weather-metrics"><p><strong>${n(r.relative_humidity_2m,' %')}</strong><span>Humedad relativa</span></p><p><strong>${n(r.wind_speed_10m,' km/h')}</strong><span>${wind(r.wind_direction_10m)} · rachas ${n(r.wind_gusts_10m,' km/h')}</span></p><p><strong>${n(r.precipitation,' mm',1)}</strong><span>Precipitación en la hora</span></p></div>`;
     const upcoming=next.slice(0,24), rain=values(upcoming,'precipitation'), hum=values(upcoming,'relative_humidity_2m'), cloud=values(upcoming,'cloud_cover');
     const wet=upcoming.find(x=>Number.isFinite(x.precipitation)&&x.precipitation>=.1);
     $('weather-summary').textContent=`Próximas 24 horas: ${wet?'se prevé precipitación desde las '+fmt(wet.time,{weekday:'short',hour:'2-digit',minute:'2-digit'}):rain.length===upcoming.length?'sin precipitación prevista':'precipitación no disponible'}. Humedad entre ${hum.length?n(Math.min(...hum),' %'):'—'} y ${hum.length?n(Math.max(...hum),' %'):'—'}. Nubosidad media ${n(mean(cloud),' %')}. Resumen automático a partir de la previsión.`;
-    $('weather-hours').innerHTML=next.map(x=>`<tr><th scope="row">${fmt(x.time,{weekday:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</th><td>${icon(x.weather_code)} ${describe(x.weather_code)}</td><td>${n(x.temperature_2m,'°')}</td><td>${n(x.apparent_temperature,'°')}</td><td>${n(x.relative_humidity_2m,' %')}</td><td>${n(x.precipitation,' mm',1)}</td><td>${n(x.cloud_cover,' %')}</td><td>${wind(x.wind_direction_10m)} ${n(x.wind_speed_10m,' km/h')} / ${n(x.wind_gusts_10m,' km/h')}</td></tr>`).join('');
+    $('weather-hours').innerHTML=next.map(x=>`<tr><th scope="row">${fmt(x.time,{weekday:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</th><td>${icon(x.weather_code,x.is_day,x.time)} ${describe(x.weather_code)}</td><td>${n(x.temperature_2m,'°')}</td><td>${n(x.apparent_temperature,'°')}</td><td>${n(x.relative_humidity_2m,' %')}</td><td>${n(x.precipitation,' mm',1)}</td><td>${n(x.cloud_cover,' %')}</td><td>${wind(x.wind_direction_10m)} ${n(x.wind_speed_10m,' km/h')} / ${n(x.wind_gusts_10m,' km/h')}</td></tr>`).join('');
     const groups=new Map();
     all.forEach(x=>{const k=dayKey(x.time);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(x)});
     $('weather-days').innerHTML=[...groups.values()].slice(0,14).map((g,i)=>{
@@ -82,6 +82,7 @@
   refresh();
 
 })();
+
 
 
 

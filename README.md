@@ -1,6 +1,6 @@
 # APP YEPES
 
-Versión 1.0.0. Aplicación independiente de tiempo, noticias y mapa de Yepes, Toledo.
+Versión 1.0.1. Aplicación independiente de tiempo, noticias y mapa de Yepes, Toledo.
 
 ## Funciones
 
@@ -28,4 +28,7 @@ Fuentes: Open-Meteo/ECMWF (CC BY 4.0), Ayuntamiento de Yepes, IGN mediante es-at
 
 ## Historial
 
+- 1.0.1: iconos según día/noche de Open-Meteo y fase lunar por fecha/hora mediante SunCalc 1.9.0 (BSD-2-Clause, licencia incluida). Luna nocturna despejada/parcialmente nubosa, sin soles en chubascos nocturnos. Fase en el resumen nocturno. Las tarjetas diarias resumen el día completo y no representan una hora nocturna. La fase no indica que la Luna esté sobre el horizonte ni despejada de nubes.
+
 - 1.0.0: primera adaptación para Yepes con fuentes, coordenadas, iconos y datos propios.
+
