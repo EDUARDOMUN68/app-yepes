@@ -27,3 +27,12 @@ body{overflow:hidden}.app-nav{height:60px;display:flex;align-items:center;gap:12
 
 #weather-hours .weather-sky-icon{font-size:26px;line-height:1;display:inline-flex;align-items:center;gap:3px;vertical-align:middle;margin-right:4px}
 #weather-hours .weather-moon{flex:none;vertical-align:middle}
+
+.weather-now{flex-direction:column;text-align:center;gap:18px}
+.weather-now>div:first-child{width:100%}
+.weather-now h2{display:flex;align-items:center;justify-content:center;gap:14px}
+.weather-metrics{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start;margin-top:0}
+.weather-metrics p{min-width:0;margin:0}
+.weather-metrics strong{white-space:nowrap}
+.weather-metrics span{line-height:1.6}
+@media(max-width:420px){.weather-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}.weather-metrics p:last-child{grid-column:1/-1}}

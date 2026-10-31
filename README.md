@@ -48,3 +48,7 @@ Luna con cráteres suaves, halo plateado y detalle de relieve; tamaño de28px en
 ### 1.0.5
 
 Iconos horarios del sol, nubes y precipitación ampliados a26px y alineados con la luna de28px. Texto y tarjetas diarias mantienen su tamaño.
+
+### 1.0.6
+
+Resumen meteorológico principal centrado, con icono y temperatura alineados y métricas distribuidas en columnas adaptables al ancho del móvil.
