@@ -32,3 +32,7 @@ Fuentes: Open-Meteo/ECMWF (CC BY 4.0), Ayuntamiento de Yepes, IGN mediante es-at
 
 - 1.0.0: primera adaptación para Yepes con fuentes, coordenadas, iconos y datos propios.
 
+
+### 1.0.2
+
+Luna blanca con contorno gris y zona en sombra gris azulada, dibujada en SVG según la iluminación calculada. Conserva la fase y se distingue del sol amarillo en todos los dispositivos.
