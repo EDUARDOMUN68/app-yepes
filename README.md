@@ -58,3 +58,7 @@ Resumen meteorológico principal centrado, con icono y temperatura alineados y m
 Avisos oficiales encima de la previsión, para La Mancha toledana (684504), zona municipal confirmada en AEMET. Índice RSS oficial y mensajes CAP1.2 en español, con nivel, fechas, probabilidad, descripción e instrucciones. Consulta automatizada cada20min mediante GitHub Actions, sujeta a retrasos del servicio. La app consulta al abrir/volver, actualizar y cada5min visible; sin notificaciones push.
 
 Los avisos caducados se ocultan; una consulta fallida conserva el último resultado con estado no confirmado. Tras90min sin éxito no se afirma ausencia de avisos. Solo una consulta completa reemplaza el conjunto anterior, retirando avisos cancelados/actualizados. alerts.json no se guarda en la caché de instalación. Los avisos por zona y la previsión puntual ECMWF son fuentes independientes. Fuentes: https://www.aemet.es/es/rss_info/avisos/esp y ficha municipal oficial.
+
+### 1.1.1
+
+Avisos en una línea breve con enlace a AEMET para los detalles; conserva comprobación de zona, caducidad y estado sin confirmar al fallar o quedar antiguo.

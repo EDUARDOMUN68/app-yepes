@@ -14,6 +14,6 @@ async function view(mode){
  const context={Date,AbortSignal,setInterval:()=>{},window:{addEventListener(){}},document:{getElementById:id=>id==='weather-alerts'?box:{addEventListener(){}},addEventListener(){}},fetch:async()=>({ok:true,json:async()=>data})};
  vm.runInNewContext(source,context);await new Promise(resolve=>setImmediate(resolve));return box.innerHTML;
 }
-test('aviso futuro conserva fechas, nivel, fuente y escapa texto',async()=>{const html=await view('normal');assert.match(html,/Nivel naranja/);assert.match(html,/Próximo/);assert.match(html,/80 mm/);assert.match(html,/&lt;script&gt;/);assert.doesNotMatch(html,/No podemos confirmar/)});
-test('vacío y expirado solo muestran ausencia con consulta reciente correcta',async()=>{for(const mode of ['empty','expired']){const html=await view(mode);assert.match(html,/Sin avisos vigentes ni próximos/);assert.doesNotMatch(html,/Nivel naranja/)}});
-test('error o datos antiguos no dan falsa ausencia ni vigencia confirmada',async()=>{for(const mode of ['failure','stale'])assert.match(await view(mode),/No podemos confirmar el estado actual/)});
+test('aviso futuro se resume en una línea con enlace oficial',async()=>{const html=await view('normal');assert.match(html,/Hay avisos oficiales en tu zona/);assert.match(html,/Consultar avisos en AEMET/);assert.doesNotMatch(html,/<article|<h2|80 mm|script&gt;/)});
+test('vacío y expirado muestran ausencia con consulta reciente correcta',async()=>{for(const mode of ['empty','expired'])assert.match(await view(mode),/Sin avisos oficiales en tu zona/)});
+test('error o datos antiguos muestran estado sin confirmar',async()=>{for(const mode of ['failure','stale']){const html=await view(mode);assert.match(html,/Avisos oficiales sin confirmar/);assert.doesNotMatch(html,/Sin avisos oficiales en tu zona/)}});
