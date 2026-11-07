@@ -36,3 +36,5 @@ body{overflow:hidden}.app-nav{height:60px;display:flex;align-items:center;gap:12
 .weather-metrics strong{white-space:nowrap}
 .weather-metrics span{line-height:1.6}
 @media(max-width:420px){.weather-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}.weather-metrics p:last-child{grid-column:1/-1}}
+
+.weather-alerts{margin:20px 0;padding:20px;background:#fff;border:1px solid #cbdacf;border-radius:16px;line-height:1.6}.weather-alerts h2{margin:0;font-size:21px}.alerts-zone{margin:4px 0 12px;color:#4d685b}.aemet-alert{padding:16px;margin:12px 0;border-radius:12px;border-left:6px solid}.aemet-alert h3{margin:0;font-size:17px}.aemet-alert p{margin:8px 0}.level-amarillo{background:#fff9d9;border-color:#bd8700;color:#574100}.level-naranja{background:#fff0dc;border-color:#d76200;color:#633000}.level-rojo{background:#ffeded;border-color:#bd202b;color:#7b1420}.alerts-unavailable{padding:12px;background:#fff1dc;color:#714500;border-radius:8px}
