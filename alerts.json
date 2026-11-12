@@ -3,23 +3,9 @@
   "zone": "684504",
   "area": "La Mancha toledana",
   "municipality": "Yepes",
-  "checkedAt": "2026-11-11T21:56:49.824749+00:00",
-  "lastSuccessAt": "2026-11-11T21:56:49.824749+00:00",
+  "checkedAt": "2026-11-12T02:55:33.771349+00:00",
+  "lastSuccessAt": "2026-11-12T02:55:33.771349+00:00",
   "status": "ok",
   "source": "https://www.aemet.es/documentos_d/eltiempo/prediccion/avisos/rss/CAP_AFAE_wah_RSS.xml",
-  "alerts": [
-    {
-      "id": "2.49.0.0.724.0.ES.20261111103745.684504VIRM12021794393465",
-      "sent": "2026-11-11T10:37:45-00:00",
-      "level": "amarillo",
-      "headline": "Aviso de vientos de nivel amarillo. La Mancha toledana",
-      "description": "Rachas máximas: 80 km/h. Viento del suroeste y oeste.",
-      "instruction": "Esté atento. Manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños moderados a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.",
-      "probability": "40%-70%",
-      "onset": "2026-11-11T18:00:00+01:00",
-      "expires": "2026-11-12T02:59:59+01:00",
-      "zone": "684504",
-      "area": "La Mancha toledana"
-    }
-  ]
+  "alerts": []
 }
