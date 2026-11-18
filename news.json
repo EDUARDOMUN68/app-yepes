@@ -1,8 +1,13 @@
 {
   "source": "https://www.yepes.es/",
-  "checkedAt": "2026-11-18T11:57:03.162Z",
-  "updatedAt": "2026-11-18T11:57:03.162Z",
+  "checkedAt": "2026-11-18T20:44:05.404Z",
+  "updatedAt": "2026-11-18T20:44:05.404Z",
   "items": [
+    {
+      "title": "PROGRAMACIÓN NAVIDAD CULTURAL DE YEPES 2026-2027",
+      "url": "https://www.yepes.es/noticias/noticia/programacion-navidad-cultural-de-yepes-2026-2027",
+      "publishedDate": "2026-11-18"
+    },
     {
       "title": "YEPES, GALARDONADO CON EL RECONOCIMIENTO NACIONAL AL MANTENIMIENTO DE LAS TRADICIONES 2027",
       "url": "https://www.yepes.es/noticias/noticia/yepes-galardonado-con-el-reconocimiento-nacional-al-mantenimiento-de-las-tradiciones-2027",
@@ -17,11 +22,6 @@
       "title": "ACTOS DEL DÍA INTERNACIONAL CONTRA LA VIOLENCIA HACIA LAS MUJERES",
       "url": "https://www.yepes.es/noticias/noticia/actos-del-dia-internacional-contra-la-violencia-hacia-las-mujeres",
       "publishedDate": "2026-11-09"
-    },
-    {
-      "title": "¡GRAN CITA TEATRAL EN YEPES CON “UN VIAJE SIN RETORNO”!",
-      "url": "https://www.yepes.es/noticias/noticia/gran-cita-teatral-en-yepes-con-un-viaje-sin-retorno",
-      "publishedDate": "2026-10-19"
     }
   ]
 }
