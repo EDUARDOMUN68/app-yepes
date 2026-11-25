@@ -1,8 +1,13 @@
 {
   "source": "https://www.yepes.es/",
-  "checkedAt": "2026-11-25T08:52:19.129Z",
-  "updatedAt": "2026-11-18T20:44:05.404Z",
+  "checkedAt": "2026-11-25T19:26:40.686Z",
+  "updatedAt": "2026-11-25T19:26:40.686Z",
   "items": [
+    {
+      "title": "INAUGURACIÓN EXPOSICIÓN DE PINTURA CONMEMORATIVA “BAJO LA MIRADA DE PARRA: RAÍCES Y LIENZOS”",
+      "url": "https://www.yepes.es/noticias/noticia/inauguracion-exposicion-de-pintura-conmemorativa-bajo-la-mirada-de-parra-raices-y-lienzos",
+      "publishedDate": "2026-11-24"
+    },
     {
       "title": "PROGRAMACIÓN NAVIDAD CULTURAL DE YEPES 2026-2027",
       "url": "https://www.yepes.es/noticias/noticia/programacion-navidad-cultural-de-yepes-2026-2027",
@@ -17,11 +22,6 @@
       "title": "VII CONCURSO ESCAPARATES NAVIDEÑOS",
       "url": "https://www.yepes.es/noticias/noticia/vii-concurso-escaparates-navidenos",
       "publishedDate": "2026-11-10"
-    },
-    {
-      "title": "ACTOS DEL DÍA INTERNACIONAL CONTRA LA VIOLENCIA HACIA LAS MUJERES",
-      "url": "https://www.yepes.es/noticias/noticia/actos-del-dia-internacional-contra-la-violencia-hacia-las-mujeres",
-      "publishedDate": "2026-11-09"
     }
   ]
 }
